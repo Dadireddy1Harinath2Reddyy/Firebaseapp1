@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f0f2f5;
+        font-family: Arial, sans-serif;
+    }
+
+    .card {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 90%;
+        max-width: 500px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 0.8rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+    }
+
+    button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+
+    /* Media Queries */
+    @media screen and (max-width: 768px) {
+        .card {
+            width: 95%;
+            padding: 1.5rem;
+        }
+
+        button {
+            width: 100%;
+            margin-right: 0;
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+        .card {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 0;
+        }
+
+        input, select {
+            padding: 0.6rem;
+        }
+
+        button {
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+
+
+<body>
+    <div class="card">
+    <label>First Name</label>
+    <input type="text" placeholder="Enter Your First Name" id = "FnameInp">
+    <br><br> 
+
+    <label>Last Name</label>
+    <input type="text" placeholder="Enter Your First Name" id = "LnameInp">
+    <br><br>  
+
+    <label>Batch</label>
+   <select name="" id = "BatchInp">
+        <option value="23r"> 23r</option>
+        <option value="24r"> 24r</option>
+        <option value="25r"> 25r</option>
+        <option value="26r"> 26r</option>
+        <option value="27r"> 27r</option>
+   </select>
+    <br><br> 
+    <label>Which Progaramming Language U familiar With</label>
+   <select name="" id = "langInp">
+        <option value="Python"> Python</option>
+        <option value="Java">Java</option>
+        <option value="C++"> C++</option>
+        <option value="c"> C</option>
+   </select>
+    <br><br> 
+
+    <label>Id Number </label>
+    <input type="text" placeholder="Enter Your Id Number" id = "IdInp">
+    <br><br> 
+
+    <button id="addButton">Add </button>
+    <button id="RetrieveData">Retrieve </button>
+    <button id="Update">Update</button>
+    <button id="Delete">Delete</button>
+</div>
+
+    <script type="module">
+        
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js"; 
+        import { getDatabase, ref , child,get,set,update,remove} from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+
+ const firebaseConfig = {
+          apiKey: "AIzaSyCSchCO1lkZLJCp5v3psQthH_gE69BFnKU",
+          authDomain: "fir-v10-4c542.firebaseapp.com",
+          databaseURL: "https://fir-v10-4c542-default-rtdb.firebaseio.com",
+          projectId: "fir-v10-4c542",
+          storageBucket: "fir-v10-4c542.firebasestorage.app",
+          messagingSenderId: "895751184989",
+          appId: "1:895751184989:web:ce5ffe38c3685635de63b4"
+        };
+        const app = initializeApp(firebaseConfig);
+        
+      const db  =   getDatabase()
+    let FnameInp   = document.getElementById("FnameInp");
+    let LnameInp   = document.getElementById("LnameInp");      
+    let BnameInp   = document.getElementById("BatchInp");
+    let langInp    = document.getElementById("langInp");
+    let idInp      = document.getElementById("IdInp");
+    let Addbtn     = document.getElementById("addButton");
+    let Retbtn     = document.getElementById("RetrieveData");
+    let Updatebtn  = document.getElementById("Update");
+    let Delbtn     = document.getElementById("Delete");
+    function AddData(){
+        set(ref(db,'StudentSet/' + idInp.value),{
+            fname : FnameInp.value,
+            lname : LnameInp.value,
+            batchname : BnameInp.value,
+            language : langInp.value,
+            idnumber : idInp.value 
+        }).then(()=>{
+            alert("Data Added Succesfully")
+        }).catch((error)=>{
+            alert("Data is not Inserted succesfully ");
+            console.log(error)
+        })
+    }
+    // Addbtn.addEventListener("click",AddData)
+    function RetData(){
+        const dbref = ref(db);
+        get(child(dbref,'StudentSet/' + idInp.value)).then((snapshot)=>{
+            if(snapshot.exists()){
+                FnameInp.value = snapshot.val().fname 
+                LnameInp.value = snapshot.val().lname
+                BnameInp.value = snapshot.val().batchname 
+                langInp.value  = snapshot.val().language 
+
+            }
+            else{
+                alert("User does not exists")
+            }
+        })
+    }
+    function updateData(){
+        update(ref(db,'StudentSet/' + idInp.value),{
+            fname : FnameInp.value,
+            lname : LnameInp.value,
+            batchname : BnameInp.value,
+            language : langInp.value,
+        }).then(()=>{
+            alert("Data Updated Succesfully")
+        }).catch((error)=>{
+            alert("Data is not Updated succesfully ");        console.log(error)
+        })
+    } 
+
+    function DeleteData(){
+        remove(ref(db,'StudentSet/' + idInp.value)).then(()=>{
+            alert("Data Deleted Succesfully")
+        }).catch((error)=>{
+            alert("Data is not Deleted");
+            console.log(error)
+        })
+    }
+    
+    Addbtn.addEventListener("click",AddData);
+    Retbtn.addEventListener("click",RetData);
+    Updatebtn.addEventListener("click",updateData);
+    Delbtn.addEventListener("click",DeleteData);
+
+    function clearInputs() {
+            document.getElementById('FnameInp').value = '';
+            document.getElementById('LnameInp').value = '';
+            document.getElementById('BatchInp').selectedIndex = 0;
+            document.getElementById('langInp').selectedIndex = 0;
+            document.getElementById('IdInp').value = '';
+        }
+
+        window.onload = function() {
+            document.getElementById('addButton').onclick = clearInputs;
+            document.getElementById('RetrieveData').onclick = clearInputs;
+            document.getElementById('Update').onclick = clearInputs;
+            document.getElementById('Delete').onclick = clearInputs;
+        }
+
+    </script>
+</body>
+</html>
